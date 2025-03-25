@@ -1,0 +1,62 @@
+@import "tailwindcss";
+
+#root {
+  margin: 0 auto;
+  text-align: center;
+}
+
+.main-container {
+  display: flex;
+  justify-content: center; /* Centers content horizontally */
+  align-items: center; /* Centers content vertically */
+  flex-direction: column; /* Ensures content is stacked vertically */
+}
+
+/* Style for the navbar */
+.navbar {
+  background-color: #333; /* Dark background */
+  padding: 10px 20px; /* Add padding around */
+}
+
+.nav-links {
+  display: flex; /* Enable flexbox */
+  justify-content: center; /* Center links horizontally */
+  align-items: center; /* Vertically center links */
+}
+
+.nav-link {
+  color: #fff; /* White text color */
+  text-decoration: none; /* Remove underline */
+  padding: 10px 15px; /* Space around the link */
+  margin: 0 10px; /* Space between links */
+  font-size: 16px; /* Adjust font size */
+  transition: background-color 0.3s ease; /* Smooth hover transition */
+}
+
+.nav-link:hover {
+  background-color: #555; /* Darker background on hover */
+  border-radius: 4px; /* Rounded corners on hover */
+}
+
+
+/* SessionCard styles */
+.session-card {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 1rem;
+  margin: 1rem 0;
+  text-align: left;
+}
+
+.session-card h3 {
+  margin: 0 0 0.5rem 0;
+}
+
+.session-card p {
+  margin: 0.5rem 0;
+}
+
+/* Other styles */
+.card {
+  padding: 2em;
+}
