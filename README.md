@@ -4,8 +4,7 @@
 </h1>
 
 **Purpose:**  
-Providing beautiful, free poker tracking software for everyone, precisely for casual players.
-
+Providing beautiful, free poker tracking software for everyone.
 ## Tech Stack
 
 - **Frontend:** React
@@ -31,6 +30,3 @@ Providing beautiful, free poker tracking software for everyone, precisely for ca
   Keep track of positive streaks, whether it’s weeks or months.
 
 ---
-
-Feel free to contribute and improve the project. Pull requests are always welcome!
-v
