@@ -3,52 +3,39 @@ import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContai
 import { HiArrowTrendingUp, HiArrowTrendingDown } from 'react-icons/hi2';
 import { authAxios } from '../services/authService';
 import Sidebar from '../components/SideBar';
+import { getSessionsGraph } from '../services/sessionService';
+
 
 export default function SessionsGraph() {
     const [sessionData, setSessionData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [trend, setTrend] = useState({ value: 0, isPositive: true });   // Trend data to show if performance is improving or declining
-    const [totalProfit, setTotalProfit] = useState(0);        // Total profit across all sessions
+    const [totalProfit, setTotalProfit] = useState(0);                   // Total profit across all sessions
 
     // Fetch data when component mounts
     useEffect(() => {
         const fetchSessionData = async () => {
         try {
             setIsLoading(true);
-            // Get data from backend API
-            const response = await authAxios.get('/api/sessions');
+            // Call the Python analytics endpoint
+            const data = await getSessionsGraph();
             
-            // Transform API data into format needed for chart display
-            // To this:
-            const transformedData = response.data.map((session, index) => ({
-                count: index + 1, // Adding a count field (1-based)
+            // Extract different parts of the analytics response from python code
+            const { sessions, trend: trendData, totalProfit } = data;
+
+            // Transform session data
+            const transformedData = sessions.map((session, index) => ({
+                count: index + 1,
                 profit: session.profit,
-                date: new Date(session.date).toLocaleDateString('en-GB'),
+                date: new Date(session.date).toLocaleDateString('en-GB')
             }));
 
-            // Calculate trend (last 5 sessions vs previous 5)
-            if (transformedData.length > 5) {
-            const recentFive = transformedData.slice(-5);
-            const previousFive = transformedData.slice(-10, -5);
-            
-            const recentAvg = recentFive.reduce((sum, session) => sum + session.profit, 0) / recentFive.length;
-            const previousAvg = previousFive.reduce((sum, session) => sum + session.profit, 0) / previousFive.length;
-            
-            const trendValue = ((recentAvg - previousAvg) / Math.abs(previousAvg || 1)) * 100;
-            setTrend({
-                value: Math.abs(trendValue).toFixed(1),
-                isPositive: trendValue >= 0
-            });
-            }
-
-            // Calculate total profit from all sessions
-            const total = transformedData.reduce((sum, session) => sum + session.profit, 0);
-            setTotalProfit(total);
-            
+            // update state with the data
+            setTrend(trendData);
+            setTotalProfit(totalProfit);
             setSessionData(transformedData);
         } catch (error) {
             console.error('Error fetching session data:', error);
-            // If we can't fetch data, we'll use demo data below
         } finally {
             setIsLoading(false);
         }
@@ -159,11 +146,17 @@ export default function SessionsGraph() {
                   }
                 </div>
                 <div className="text-sm">
-                  <span className="text-gray-400">Trending </span>
-                  <span className={`font-medium ${trend.isPositive ? 'text-green-400' : 'text-red-400'}`}>
-                    {trend.isPositive ? 'up' : 'down'} by {trend.value}%
-                  </span>
-                </div>
+                {isLoading ? (
+                    <span className="text-gray-400">Loading trend data...</span>
+                ) : (
+                    <>
+                    <span className="text-gray-400">Trending </span>
+                    <span className={`font-medium ${trend.isPositive ? 'text-green-400' : 'text-red-400'}`}>
+                        {trend.isPositive ? 'up' : 'down'} by {trend.value}%
+                    </span>
+                    </>
+                )}
+              </div>
               </div>
               
               <div className="ml-auto text-sm text-gray-400">

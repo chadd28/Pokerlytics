@@ -7,7 +7,12 @@ import { useUser } from '../context/userContext';
 export default function Sidebar() {
   const location = useLocation();
   const { profile: user, loading } = useUser();
-  console.log('User profile:', user);
+  
+  useEffect(() => {
+    if (user) {
+      console.log('User profile:', user);
+    }
+  }, [user]);  // This ensures it only logs when user changes
   
   /* TAILWIND TIP #1: Fixed width for icon-only sidebar */
   const sidebarClasses = `

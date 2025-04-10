@@ -42,3 +42,17 @@ export const getUserSessions = async () => {
     throw error;
   }
 };
+
+/**
+ * Fetches processed session data for graph visualization
+ * Includes trend analysis and profit calculations
+ */
+export const getSessionsGraph = async () => {
+  try {
+    const response = await api.get('/sessions-graph');
+    return response.data;
+  } catch (error) {
+    console.error('sessionService.jsx: Failed to fetch sessions graph data:', error);
+    throw error;
+  }
+};

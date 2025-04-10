@@ -18,6 +18,7 @@ router.put('/user-profile', authenticateUser, userController.updateProfile); // 
 // Session routes - protected
 router.post('/sessions', authenticateUser, sessionsController.createSession);
 router.get('/sessions', authenticateUser, sessionsController.getSessions);
+router.get('/sessions-graph', authenticateUser, statsController.analyzePokerSessions);
 // router.get('/sessions/:Id', authenticateUser, sessionsController.getGameById);
 
 module.exports = router;
