@@ -19,6 +19,8 @@ router.put('/user-profile', authenticateUser, userController.updateProfile); // 
 router.post('/sessions', authenticateUser, sessionsController.createSession);
 router.get('/sessions', authenticateUser, sessionsController.getSessions);
 router.get('/sessions-graph', authenticateUser, statsController.analyzePokerSessions);
-// router.get('/sessions/:Id', authenticateUser, sessionsController.getGameById);
+router.delete('/sessions/:id', authenticateUser, sessionsController.deleteSession);
+router.get('/sessions/:id', authenticateUser, sessionsController.getSessionById);
+router.put('/sessions/:id', authenticateUser, sessionsController.updateSession);
 
 module.exports = router;

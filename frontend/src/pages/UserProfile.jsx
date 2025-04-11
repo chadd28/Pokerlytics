@@ -162,7 +162,7 @@ function ProfileInfo() {
                     
                     <StatCard 
                         label="Win Rate" 
-                        value={profile?.stats?.winRate} 
+                        value={`${(Number(profile.stats.winRate).toFixed(2))}%`} 
                         defaultValue="0%" 
                     />
                 </div>

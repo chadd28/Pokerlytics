@@ -4,6 +4,7 @@ import Sidebar from '../components/SideBar';
 import { FaCalendar, FaDollarSign, FaClock, FaMapMarkerAlt, FaGamepad } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { createNewSession } from '../services/sessionService'; 
+import SessionSummary from '../components/SessionSummary';
 
 const NewSession = () => {
   const navigate = useNavigate();
@@ -123,6 +124,11 @@ const NewSession = () => {
         } catch (err) {
         console.error('Failed to create session:', err);
         setError(err.message || 'Failed to create session');
+        
+        window.scrollTo({   // Scroll to the top of the page to show the error message
+            top: 0,
+            behavior: 'smooth'
+        });
         } finally {
         setIsSubmitting(false);
         }
@@ -348,16 +354,11 @@ const NewSession = () => {
                         </div>
                     </div>
                     
-                    {/* Profit/Loss Preview */}
+                    {/* Session Summary component */}
                     {formData.buyIn && formData.cashOut && (
-                        <div className="mb-6 p-4 rounded-lg bg-gray-700/50">
-                        <h3 className="text-lg font-medium text-white mb-2">Session Summary</h3>
-                        <p className={`text-xl font-bold ${parseFloat(formData.cashOut) - parseFloat(formData.buyIn) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                            {parseFloat(formData.cashOut) - parseFloat(formData.buyIn) >= 0 ? 'Profit: ' : 'Loss: '}
-                            ${Math.abs(parseFloat(formData.cashOut) - parseFloat(formData.buyIn)).toFixed(2)}
-                        </p>
-                        </div>
+                    <SessionSummary formData={formData} />
                     )}
+                    
                 
                 {/* Form Actions */}
                 <div className="flex justify-end gap-4">

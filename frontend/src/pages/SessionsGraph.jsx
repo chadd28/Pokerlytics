@@ -3,6 +3,7 @@ import { LineChart, Line, CartesianGrid, XAxis, YAxis, Tooltip, ResponsiveContai
 import { HiArrowTrendingUp, HiArrowTrendingDown, HiInformationCircle } from 'react-icons/hi2';
 import Sidebar from '../components/SideBar';
 import { getSessionsGraph } from '../services/sessionService';
+import { motion } from 'framer-motion'; 
 
 
 export default function SessionsGraph() {
@@ -29,7 +30,7 @@ export default function SessionsGraph() {
                 count: index + 1,
                 profit: session.profit,
                 cum_profit: session.cum_profit,
-                date: new Date(session.date).toLocaleDateString('en-GB')
+                date: new Date(session.date).toLocaleDateString('en-GB', {timeZone: 'UTC'}) 
             }));
 
             // update state with the data
@@ -59,7 +60,10 @@ export default function SessionsGraph() {
                 <div className="bg-gray-700 p-2 rounded-md shadow-md border border-gray-500 text-sm">
                     <p className="font-medium">{sessionData.date}</p>
                     <p className={`${sessionData.profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        ${sessionData.profit}
+                        ${sessionData.profit.toFixed(2)}
+                    </p>
+                    <p className={`${sessionData.cum_profit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        Net: ${sessionData.cum_profit.toFixed(2)}
                     </p>
                 </div>
             );
@@ -72,23 +76,55 @@ export default function SessionsGraph() {
       <Sidebar />
       
       {/* Main content area with better centering */}
-      <div className="flex-1 p-8 ml-40">
-        <div className="max-w-4xl mx-auto">
+      <div className="flex-1 flex justify-center items-start p-4 md:p-6 lg:p-8 ml-40">  {/* ml-40 offsets content by sidebar width */}
+        <div className="w-full xl:max-w-6xl">
           {/* Card with dark theme */}
-          <div className="bg-gray-800 rounded-lg shadow-xl overflow-hidden">
+          <motion.div 
+            className="bg-gray-800 rounded-lg shadow-xl overflow-hidden w-full"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
             {/* Card header */}
-            <div className="p-6 border-b border-gray-700">
-              <h2 className="text-xl font-semibold text-white">All Sessions</h2>
+            <div className="p-6 border-b border-gray-700 flex justify-between items-start">
+                <h2 className="text-2xl font-semibold text-white flex items-center h-full">All Sessions</h2>
+        
+                {/* Net Result display */}
+                {!isLoading && data.length > 0 && (
+                    <motion.div 
+                        className="flex flex-col items-end"
+                        initial={{ opacity: 0, x: 20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ duration: 0.6, delay: 0.3 }}
+                    >
+                        <span className="text-xs uppercase tracking-wider text-gray-400">Net Result</span>
+                        <span className={`text-xl font-bold ${totalProfit >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                        {totalProfit >= 0 ? '+' : ''}{typeof totalProfit === 'number' ? `$${totalProfit.toFixed(2)}` : '$0.00'}
+                        </span>
+                    </motion.div>
+                )}
             </div>
             
             {/* Card content - the chart */}
             <div className="p-6">
               <div className="h-80">
                 {isLoading ? (
-                  <div className="flex items-center justify-center h-full">
-                    <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
-                  </div>
+                    <motion.div 
+                        className="flex items-center justify-center h-full"
+                        initial={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        key="loading"
+                    >
+                        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+                    </motion.div>
                 ) : data.length > 0 ? (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        transition={{ duration: 0.6 }}
+                        key="chart"
+                        className="h-full w-full"
+                    >
                     <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={data} margin={{ top: 10, right: 20, left: 10, bottom: 10 }}>
                       {/* Dark theme grid */}
@@ -124,6 +160,7 @@ export default function SessionsGraph() {
                       />
                       </LineChart>
                   </ResponsiveContainer>
+                  </motion.div>
                 ) : (
                     <div className="flex items-center justify-center h-full">
                         <p className="text-gray-400 text-lg">No sessions to show</p>
@@ -167,7 +204,7 @@ export default function SessionsGraph() {
                         <div 
                             className="absolute bottom-full left-0 mb-2 w-64 p-3 bg-gray-700 text-gray-200 text-xs rounded-lg shadow-lg z-10 border border-gray-600 transition-all duration-300 transform origin-bottom-left"
                         >
-                            <p>This trend reflects the recent change in profits compared to earlier sessions. A negative value means your recent profits are lower than before, even if you're still in profit overall.</p>
+                            <p>This trend reflects the recent change in profits between the last 3 sessions and the prior 3 sessions. A negative value means your recent profits are lower than before, even if you're still in profit overall.</p>
                             <div className="absolute -bottom-1 left-2 w-2 h-2 bg-gray-700 border-r border-b border-gray-600 transform rotate-45"></div>
                         </div>
                     )}
@@ -179,9 +216,9 @@ export default function SessionsGraph() {
                 Showing {data.length} sessions
               </div>
             </div>
+            </motion.div>
           </div>
         </div>
       </div>
-    </div>
   );
 }

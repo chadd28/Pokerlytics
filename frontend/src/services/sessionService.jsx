@@ -44,6 +44,46 @@ export const getUserSessions = async () => {
 };
 
 /**
+ * Get a specific session by ID
+ */
+export const getSessionById = async (sessionId) => {
+  try {
+    const response = await api.get(`/sessions/${sessionId}`);
+    return response.data.session;
+  } catch (error) {
+    console.error('Failed to fetch session:', error);
+    throw error;
+  }
+};
+
+/**
+ * Update an existing session
+ */
+export const updateSession = async (sessionId, sessionData) => {
+  try {
+    const response = await api.put(`/sessions/${sessionId}`, sessionData);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to update session:', error);
+    throw error;
+  }
+};
+
+
+/**
+ * Delete a session
+ */
+export const deleteSession = async (sessionId) => {
+  try {
+    const response = await api.delete(`/sessions/${sessionId}`);
+    return response.data;
+  } catch (error) {
+    console.error('Failed to delete session:', error);
+    throw error;
+  }
+};
+
+/**
  * Fetches processed session data for graph visualization
  * Includes trend analysis and profit calculations
  */

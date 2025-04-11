@@ -13,6 +13,7 @@ import Settings from './pages/Settings'
 import Sessions from './pages/Sessions'
 import SessionsGraph from './pages/SessionsGraph';
 import NewSession from './pages/NewSession'
+import UpdateSession from './pages/UpdateSession';
 
 
 function App() {
@@ -28,6 +29,7 @@ function App() {
           <Route path="/user-profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
           <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
           <Route path="/sessions" element={<ProtectedRoute><Sessions /></ProtectedRoute>} />
+          <Route path="/sessions/:id" element={<ProtectedRoute><UpdateSession /></ProtectedRoute>} />
           <Route path="/sessions-graph" element={<ProtectedRoute><SessionsGraph /></ProtectedRoute>} />
           <Route path="/new-session" element={<ProtectedRoute><NewSession /></ProtectedRoute>} />
         </Routes>

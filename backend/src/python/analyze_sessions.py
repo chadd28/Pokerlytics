@@ -27,8 +27,8 @@ def process(sessions_data):
     
     # Extract date/profit 
     df['date'] = pd.to_datetime(df['start_time'])
-    df['profit'] = df['profit_loss']
-    df['cum_profit'] = df['profit'].cumsum()
+    df['profit'] = df['profit_loss']    
+    df['cum_profit'] = df['profit'].cumsum()    # cumulative profit
     total_profit = round(df['profit'].sum(), 2) # calc total profit
     
     # Sort by date
@@ -44,9 +44,9 @@ def process(sessions_data):
         })
     
     # calculate trend
-    if len(df) >= 10:
-        recent_data = df.iloc[-5:]
-        prev_data = df.iloc[-10:-5]
+    if len(df) >= 6:
+        recent_data = df.iloc[-3:]
+        prev_data = df.iloc[-6:-3]
         recent_avg = recent_data['profit'].mean()
         previous_avg = prev_data['profit'].mean()
         # Avoid division by zero
@@ -63,7 +63,7 @@ def process(sessions_data):
         trend_value = abs(round(trend_value, 1))
     else:
         # use slope as fallback
-        y = df['profit'].values[-9:]  # Take last up to 9 points
+        y = df['profit'].values[-5:]  # Take last up to 9 points
         x = np.arange(len(y))
         if len(y) > 1:
             slope, _ = np.polyfit(x, y, 1)
