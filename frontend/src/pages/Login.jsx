@@ -1,14 +1,18 @@
 import { useState } from 'react'; 
-import { Link } from 'react-router-dom'; 
+import { Link, useNavigate } from 'react-router-dom'; 
 import { motion } from 'framer-motion'; 
+import { useUser } from '../context/userContext'; // Import the user context to check if the user is logged in
+import { loginUser } from '../services/authService'; // Import the login function from authService
 
 function Login() {
+  const navigate = useNavigate(); 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const { updateUser } = useUser();
   
   // Function that runs when the form is submitted
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     // Prevent the default form submission behavior (page reload)
     event.preventDefault();
     
@@ -16,16 +20,23 @@ function Login() {
       setError('Please enter both email and password.');
       return;
     }
-    setError('');
-    
-    // Here you would typically:
-    // 1. Send the login credentials to your backend API
-    // 2. Receive a token or session info
-    // 3. Store authentication state
-    // 4. Redirect to dashboard
-    console.log('Login attempted with:', { email, password });
-    alert('Login functionality would connect to your backend here.');
-  };
+
+    setError(''); // Clear any previous error messages
+    try {
+      // This only calls Supabase authentication - no backend call
+      const { user } = await loginUser(email, password);
+      await updateUser(); // fetch the profile and store it in context + localStorage
+      console.log('Login successful:', user);
+
+      
+
+      navigate('/dashboard');
+      
+    } catch (error) {
+      console.error('Login error:', error);
+      setError(error.message || 'Login failed. Please try again.');
+    }
+    };
   
   return (
     // Main container with dark theme
