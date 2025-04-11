@@ -20,13 +20,13 @@ const NewSession = () => {
     game_type: "Cash - NL Hold'em", // Default value
     additional_info: {
       notes: '',
-      bb: '',
-      sb: '',
-      num_players: ''
+      bb: '0.2',
+      sb: '0.1',
+      customBlinds: false,
+      num_players: '',
     }
   });
 
-  // Update this function to work with additional_info instead of additionalInfo
     const handleAdditionalInfoChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
@@ -37,6 +37,34 @@ const NewSession = () => {
         }
         }));
     };
+    // handle blind selection
+    const handleBlindChange = (e) => {
+        const value = e.target.value;
+        
+        if (value === 'custom') {
+          // Set customBlinds to true to show the input fields
+          setFormData(prev => ({
+            ...prev,
+            additional_info: {
+              ...prev.additional_info,
+              customBlinds: true
+            }
+          }));
+        } else {
+          // Parse the selected value and update state
+          const [sb, bb] = value.split('/');
+          
+          setFormData(prev => ({
+            ...prev,
+            additional_info: {
+              ...prev.additional_info,
+              sb: sb,
+              bb: bb,
+              customBlinds: false
+            }
+          }));
+        }
+      };
   
   // Also update the notes change handler so it goes into additional_info
   const handleChange = (e) => {
@@ -230,8 +258,6 @@ const NewSession = () => {
                     </div>
                     
                     </div>
-
-                    
                     
                     {/* Notes field should update additional_info.notes */}
                     <div className="mb-6">
@@ -249,48 +275,77 @@ const NewSession = () => {
                     </div>
 
                     {/* Add inputs for other additional_info fields if needed */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Big Blind
-                        </label>
-                        <input
-                        type="text"
-                        name="bb"
-                        value={formData.additional_info.bb}
-                        onChange={handleAdditionalInfoChange}
-                        placeholder="e.g. 5"
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
-                    </div>
+                    <div className="flex flex-col md:flex-row md:items-end md:gap-x-4 gap-y-4 mb-6">
+                        {/* Blinds dropdown */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Blind Level
+                            </label>
+                            <select
+                            name="blinds"
+                            onChange={handleBlindChange}
+                            className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            defaultValue="0.1/0.2"
+                            >
+                            <option value="0.1/0.2">$0.1 / $0.2</option>
+                            <option value="0.25/0.5">$0.25 / $0.5</option>
+                            <option value="0.5/1">$0.5 / $1</option>
+                            <option value="1/2">$1 / $2</option>
+                            <option value="custom">Custom...</option>
+                            </select>
+                        </div>
+                        {/* Only show custom blind inputs when needed */}
+                        {formData.additional_info.customBlinds && (
+                            // Use flex for horizontal layout, add a smaller gap
+                            <div className="md:col-span-2 flex flex-wrap gap-x-4 gap-y-2"> {/* Changed grid to flex, adjusted gap */}
+                            {/* Small Blind */}
+                            <div className="flex flex-col">
+                                <label className="block text-sm font-medium text-gray-300 mb-1"> {/* Reduced mb slightly */}
+                                Small Blind
+                                </label>
+                                <input
+                                type="number"
+                                name="sb"
+                                value={formData.additional_info.sb}
+                                onChange={handleAdditionalInfoChange}
+                                min="0"
+                                step="0.01"
+                                placeholder="0.1"
+                                className="w-24 bg-gray-700 border border-gray-600 rounded-lg px-3 py-1.5 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+                                />
+                            </div>
+                            {/* Big Blind */}
+                            <div className="flex flex-col">
+                                <label className="block text-sm font-medium text-gray-300 mb-1"> {/* Reduced mb slightly */}
+                                Big Blind
+                                </label>
+                                <input
+                                type="number"
+                                name="bb"
+                                value={formData.additional_info.bb}
+                                onChange={handleAdditionalInfoChange}
+                                min="0"
+                                step="0.01"
+                                placeholder="0.2"
+                                className="w-24 bg-gray-700 border border-gray-600 rounded-lg px-3 py-1.5 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm"
+                                />
+                            </div>
+                            </div>
+                        )}
                     
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Small Blind
-                        </label>
-                        <input
-                        type="text"
-                        name="sb"
-                        value={formData.additional_info.sb}
-                        onChange={handleAdditionalInfoChange}
-                        placeholder="e.g. 2"
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
-                    </div>
-                    
-                    <div>
-                        <label className="block text-sm font-medium text-gray-300 mb-2">
-                        Number of Players
-                        </label>
-                        <input
-                        type="number"
-                        name="num_players"
-                        value={formData.additional_info.num_players}
-                        onChange={handleAdditionalInfoChange}
-                        placeholder="e.g. 9"
-                        className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                        />
-                    </div>
+                        <div>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">
+                            Number of Players
+                            </label>
+                            <input
+                            type="number"
+                            name="num_players"
+                            value={formData.additional_info.num_players}
+                            onChange={handleAdditionalInfoChange}
+                            placeholder="e.g. 9"
+                            className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                            />
+                        </div>
                     </div>
                     
                     {/* Profit/Loss Preview */}

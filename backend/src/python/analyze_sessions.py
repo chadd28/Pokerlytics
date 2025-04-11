@@ -28,6 +28,7 @@ def process(sessions_data):
     # Extract date/profit 
     df['date'] = pd.to_datetime(df['start_time'])
     df['profit'] = df['profit_loss']
+    df['cum_profit'] = df['profit'].cumsum()
     total_profit = round(df['profit'].sum(), 2) # calc total profit
     
     # Sort by date
@@ -38,7 +39,8 @@ def process(sessions_data):
     for _, row in df.iterrows():
         sessions_formatted.append({
             'date': row['date'].strftime('%Y-%m-%d'),
-            'profit': float(row['profit'])
+            'profit': float(row['profit']),
+            'cum_profit': float(row['cum_profit'])
         })
     
     # calculate trend
@@ -76,7 +78,6 @@ def process(sessions_data):
         "trend": {"value": float(trend_value), "isPositive": bool(is_positive)},
         "totalProfit": float(total_profit)
     }
-
     return result
     
     
@@ -84,8 +85,8 @@ def process(sessions_data):
     needs to be in this format/schema to match graph input in frontend:
     {
         "sessions": [
-            {"date": "2023-01-15", "profit": 150},
-            {"date": "2023-02-10", "profit": -75}
+            {"date": "2023-01-15", "profit": 150, "cum_profit": 150},
+            {"date": "2023-02-10", "profit": -75, "cum_profit": 75},
         ],
         "trend": {"value": 12.5, "isPositive": true},
         "totalProfit": 75

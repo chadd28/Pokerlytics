@@ -33,6 +33,10 @@ const Dashboard = () => {
         <div className="flex h-screen">
             <SideBar />
 
+            {/* main total session graph
+            last 5 sessions, add session button
+            important stats:
+            total time played, total profit, total sessions, etc */}
 
             <div class="flex-1 bg-gray-900 p-6">
                 <h1 class="text-2xl font-semibold">Main Content</h1>

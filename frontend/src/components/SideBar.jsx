@@ -72,7 +72,7 @@ export default function Sidebar() {
             <ul className="space-y-4 flex flex-col items-center pt-4">
             <NavItem to="/dashboard" icon={<FaHome />} text="Dashboard" />
             <NavItem to="/sessions" icon={<LuNotebookPen />} text="Sessions" />
-            <NavItem to="/sessions-graph" icon={<FaChartBar />} text="Graph" />
+            <NavItem to="/sessions-graph" icon={<FaChartBar />} text="Graphs" />
             <NavItem to="/user-profile" icon={<FaUser />} text="Profile" />
             <NavItem to="/settings" icon={<FaCog />} text="Settings" />
             </ul>
