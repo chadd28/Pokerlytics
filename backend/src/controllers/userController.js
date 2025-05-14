@@ -95,6 +95,7 @@ const getProfile = async (req, res) => {
           email: userEmail,
           firstName: profile.first_name,
           lastName: profile.last_name,
+          displayName: profile.display_name,
           createdAt: profile.date_joined, 
           stats: {
             gamesPlayed: profile.games_played, 
@@ -149,6 +150,7 @@ const updateProfile = async (req, res) => {
       .update({
         first_name: updatedData.firstName || undefined,
         last_name: updatedData.lastName || undefined,
+        display_name: updatedData.displayName || undefined,
         games_played: gamesPlayed,
         win_rate: parseFloat(winRate.toFixed(2)),
         updated_at: new Date()
@@ -169,6 +171,7 @@ const updateProfile = async (req, res) => {
         email: req.user.email,
         firstName: updatedProfile.first_name,
         lastName: updatedProfile.last_name,
+        displayName: updatedProfile.display_name,
         createdAt: updatedProfile.date_joined,
         updatedAt: updatedProfile.updated_at,
         stats: {

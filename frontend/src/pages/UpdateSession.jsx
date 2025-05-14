@@ -68,7 +68,7 @@ const UpdateSession = () => {
 
         // Check if we should show custom blinds inputs
         if (additionalInfo.bb && additionalInfo.sb) {
-          const standardBlinds = ['0.1/0.2', '0.25/0.5', '0.5/1', '1/2'];
+          const standardBlinds = ['0.05/0.1', '0.1/0.2', '0.25/0.5', '0.5/1', '1/2'];
           const currentBlinds = `${additionalInfo.sb}/${additionalInfo.bb}`;
           
           if (!standardBlinds.includes(currentBlinds)) {
@@ -218,7 +218,7 @@ const UpdateSession = () => {
     if (customBlinds) return 'custom';
     
     // Try to match with standard blinds
-    const standardBlinds = ['0.1/0.2', '0.25/0.5', '0.5/1', '1/2'];
+    const standardBlinds = ['0.05/0.1', '0.1/0.2', '0.25/0.5', '0.5/1', '1/2'];
     const currentBlinds = `${sb}/${bb}`;
     
     if (standardBlinds.includes(currentBlinds)) {
@@ -355,6 +355,7 @@ const UpdateSession = () => {
                     required
                   >
                     <option value="Cash - NL Hold'em">Cash - NL Hold'em</option>
+                    <option value="Cash - Limit Hold'em">Cash - Limit Hold'em</option>
                     <option value="Tournament">Tournament</option>
                     <option value="Sit & Go">Sit & Go</option>
                   </select>
@@ -405,10 +406,11 @@ const UpdateSession = () => {
                     value={getCurrentBlindLevel()}
                     className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                   >
+                    <option value="0.05/0.1">$0.05 / $0.1</option>
                     <option value="0.1/0.2">$0.1 / $0.2</option>
-                    <option value="0.25/0.5">$0.25 / $0.5</option>
                     <option value="0.5/1">$0.5 / $1</option>
                     <option value="1/2">$1 / $2</option>
+                    <option value="1/3">$1 / $3</option>
                     <option value="custom">Custom...</option>
                   </select>
                 </div>

@@ -124,7 +124,8 @@ const createSession = async (req, res) => {
     return res.status(201).json({ 
       success: true,
       message: 'Session created successfully',
-      session: data[0] 
+      session: data[0],
+      change: true // Indicate a change occurred
     });
   } catch (error) {
     console.error('Error:', error);
@@ -352,7 +353,8 @@ const updateSession = async (req, res) => {
     return res.status(200).json({ 
       success: true,
       message: 'Session updated successfully',
-      session: data[0]
+      session: data[0],
+      change: true // Indicate a change occurred
     });
   } catch (error) {
     console.error('Error:', error);
@@ -421,7 +423,8 @@ const deleteSession = async (req, res) => {
     
     return res.status(200).json({ 
       success: true,
-      message: 'Session deleted successfully' 
+      message: 'Session deleted successfully',
+      change: true // Indicate a change occurred
     });
   } catch (error) {
     console.error('Error:', error);

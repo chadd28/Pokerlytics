@@ -1,5 +1,6 @@
 import axios from 'axios';
 import supabase from '../supabase';
+import { notifyChange } from '../context/sessionsContext';
 
 // Create an axios instance with a base URL
 const api = axios.create({
@@ -21,6 +22,7 @@ api.interceptors.request.use(async (config) => {
 export const createNewSession = async (sessionData) => {
   try {
     const response = await api.post('/sessions', sessionData);
+    notifyChange(); // Notify context of change
     return response.data;
   } catch (error) {
     console.error('Failed to create session:', error);
@@ -29,7 +31,7 @@ export const createNewSession = async (sessionData) => {
 };
 
 /**
- * Fetches the list of user sessions from the server.
+ * Fetches the list of user sessions from the server. 
  */
 export const getUserSessions = async () => {
   try {
@@ -62,6 +64,7 @@ export const getSessionById = async (sessionId) => {
 export const updateSession = async (sessionId, sessionData) => {
   try {
     const response = await api.put(`/sessions/${sessionId}`, sessionData);
+    notifyChange(); // Notify context of change
     return response.data;
   } catch (error) {
     console.error('Failed to update session:', error);
@@ -76,6 +79,7 @@ export const updateSession = async (sessionId, sessionData) => {
 export const deleteSession = async (sessionId) => {
   try {
     const response = await api.delete(`/sessions/${sessionId}`);
+    notifyChange(); // Notify context of change
     return response.data;
   } catch (error) {
     console.error('Failed to delete session:', error);
@@ -84,10 +88,10 @@ export const deleteSession = async (sessionId) => {
 };
 
 /**
- * Fetches processed session data for graph visualization
- * Includes trend analysis and profit calculations
+ * Fetches processed session data for graph visualization and advanced analytics
+ * Includes: trend analysis, streaks, profit calculations
  */
-export const getSessionsGraph = async () => {
+export const getSessionsGraphData = async () => {
   try {
     const response = await api.get('/sessions-graph');
     return response.data;

@@ -9,8 +9,9 @@ Providing beautiful, free poker tracking software for everyone.
 
 - **Frontend:** React
 - **Styling:** Tailwind CSS
-- **Backend & Database:** Supabase
-- **Server:** Node.js with Express
+- **Database:** Supabase
+- **Backend Server:** Node.js with Express
+- **Data Analysis:** Python
 
 ## Features (Coming Soon)
 

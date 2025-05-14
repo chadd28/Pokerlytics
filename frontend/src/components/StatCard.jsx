@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
 /**
  * StatCard - A clean, modern component for displaying statistics
@@ -6,7 +7,7 @@ import React from 'react';
  * @param {Object} props
  * @param {string} props.label - Label text to display
  * @param {string|number} props.value - Value to display
- * @param {string} props.defaultValue - Default value if value is undefined
+ * @param {string|ReactNode} props.defaultValue - Default value if value is undefined
  * @param {string} props.className - Additional CSS classes to apply
  * @param {function} props.onClick - Optional click handler
  */
@@ -28,14 +29,24 @@ const StatCard = ({
       `}
       onClick={onClick}
     >
-      {/* Modern centered layout with better spacing */}
       <div className="flex flex-col items-center text-center">
-        {/* Value first for visual hierarchy */}
-        <p className="text-white text-3xl font-bold tracking-tight mb-2">
-          {value || defaultValue}
-        </p>
-        
-        {/* Label below with subtle styling */}
+        {/* Animate value when it changes */}
+        {value ? (
+          <motion.p
+            key={value}
+            initial={{ opacity: 0}}
+            animate={{ opacity: 1}}
+            transition={{ duration: 0.3 }}
+            className="text-white text-3xl font-bold tracking-tight mb-2"
+          >
+            {value}
+          </motion.p>
+        ) : (
+          <div className="text-white text-3xl font-bold tracking-tight mb-2">
+            {defaultValue}
+          </div>
+        )}
+
         <h4 className="text-xs text-gray-400 uppercase tracking-widest font-medium">
           {label}
         </h4>

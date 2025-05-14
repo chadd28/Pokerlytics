@@ -3,6 +3,7 @@ import json
 import pandas as pd
 import numpy as np
 from datetime import datetime
+import logging
 
 def process(sessions_data):
     """
@@ -31,6 +32,41 @@ def process(sessions_data):
     df['cum_profit'] = df['profit'].cumsum()    # cumulative profit
     total_profit = round(df['profit'].sum(), 2) # calc total profit
     
+    # calculate session duration in hours
+    df['end_time'] = pd.to_datetime(df['end_time'])
+    df['duration_hours'] = (df['end_time'] - df['date']).dt.total_seconds() / 3600
+
+    # Calculate $ per hour
+    df['$_per_hour'] = df.apply(lambda row: row['profit'] / row['duration_hours'] if row['duration_hours'] > 0 else 0, axis=1)
+
+    # Extract BB size from additional_info and calculate BB per hour
+    def extract_bb_size(row):
+        try:
+            additional_info = row['additional_info']
+            if isinstance(additional_info, str):
+                additional_info = json.loads(additional_info)
+            
+            return float(additional_info['bb'])
+        except:
+            return 0.2  # Default fallback just in case
+    
+    df['bb_size'] = df.apply(extract_bb_size, axis=1)
+    df['bb_per_hour'] = df.apply(lambda row: (row['profit'] / row['bb_size']) / row['duration_hours'] if row['duration_hours'] > 0 else 0, axis=1)
+
+    # ======= Calculate cumulative hourly metrics =======
+    # First, calculate total profit and total hours up to each session
+    df['cum_total_profit'] = df['profit'].cumsum()
+    df['cum_total_hours'] = df['duration_hours'].cumsum()
+    
+    # Calculate cumulative $ per hour = total profit to date / total hours to date
+    df['cum_avg_$_per_hour'] = df.apply(lambda row: row['cum_total_profit'] / row['cum_total_hours'] if row['cum_total_hours'] > 0 else 0, axis=1)
+    
+    # For cumulative BB per hour, we need weighted BB profits
+    df['bb_profit'] = df['profit'] / df['bb_size']
+    df['cum_bb_profit'] = df['bb_profit'].cumsum()
+    df['cum_avg_bb_per_hour'] = df.apply(lambda row: row['cum_bb_profit'] / row['cum_total_hours'] if row['cum_total_hours'] > 0 else 0, axis=1)
+    
+
     # Sort by date
     df = df.sort_values('date')
     
@@ -40,7 +76,11 @@ def process(sessions_data):
         sessions_formatted.append({
             'date': row['date'].strftime('%Y-%m-%d'),
             'profit': float(row['profit']),
-            'cum_profit': float(row['cum_profit'])
+            'cum_profit': round(float(row['cum_profit']), 2),
+            '$_per_hour': round(float(row['$_per_hour']), 2),
+            'cum_avg_$_per_hour': round(float(row['cum_avg_$_per_hour']), 2),
+            'bb_per_hour': round(float(row['bb_per_hour']), 2),
+            'cum_avg_bb_per_hour': round(float(row['cum_avg_bb_per_hour']), 2),
         })
     
     # calculate trend
@@ -71,13 +111,36 @@ def process(sessions_data):
             slope = 0
         is_positive = slope >= 0
         trend_value = abs(round(slope, 1)) 
+        
+    # calculate current streak
+    streak, streak_type = 0, None
+    for profit in reversed(df['profit']): #reversed because recent at bottom
+        if profit >= 0:
+            if streak_type in (None, 'Win'):
+                streak_type = 'Win'
+                streak += 1
+            else:
+                break
+        else:   # negative profit -- losing streak
+            if streak_type in (None, 'Loss'):
+                streak_type = 'Loss'
+                streak += 1
+            else:
+                break
 
     # Prepare the final output structure
     result = {
         "sessions": sessions_formatted,
         "trend": {"value": float(trend_value), "isPositive": bool(is_positive)},
-        "totalProfit": float(total_profit)
+        "totalProfit": float(total_profit),
+        "totalDuration": df['duration_hours'].sum(),
+        "currentStreak": [streak, streak_type]
     }
+
+    # Debug: Log DataFrame columns
+    logging.info("DataFrame columns: %s", df.columns.tolist())
+
+
     return result
     
     
@@ -89,7 +152,9 @@ def process(sessions_data):
             {"date": "2023-02-10", "profit": -75, "cum_profit": 75},
         ],
         "trend": {"value": 12.5, "isPositive": true},
-        "totalProfit": 75
+        "totalProfit": 75,
+        "totalDuration": 50.5,
+        "currentStreak": [2, Win]
     }
     """
 

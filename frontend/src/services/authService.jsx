@@ -1,5 +1,6 @@
 import supabase from '../supabase';
 import axios from 'axios';
+import { notifyChange } from '../context/sessionsContext';
 
 // Backend API URL
 const API_URL = 'http://localhost:4000/pokerlytics';
@@ -50,6 +51,9 @@ const loginUser = async (email, password) => {
     
     if (error) throw error;
     
+    // Notify context of change
+    notifyChange();
+    
     // Store user data in localStorage for easy access
     localStorage.setItem('userData', JSON.stringify(data.user));
     
@@ -66,6 +70,10 @@ const loginUser = async (email, password) => {
 const logoutUser = async () => {
   try {
     await supabase.auth.signOut();
+    
+    // Notify context of change
+    notifyChange();
+    
     localStorage.removeItem('userData');
     return { success: true };
   } catch (error) {
