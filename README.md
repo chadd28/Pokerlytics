@@ -21,10 +21,10 @@ Providing beautiful, free poker tracking software for everyone.
 - **Reports and Dashboards**  
   View detailed reports and intuitive dashboards to understand your performance.
 
-- **Social Networking**  (Coming Soon)
+- **Social Networking (Coming Soon)** 
   Connect with other poker players, share experiences, and tips.
 
-- **Sharing Records/Stats**  (Coming Soon)
+- **Sharing Records/Stats (Coming Soon)**  
   Share your poker records, stats, and even your most down bad moments.
 
 - **Streaks Tracking**  
