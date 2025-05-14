@@ -1,3 +1,5 @@
+// sidebar is w-40 so use that to offset pages with sidebar
+
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { FaHome, FaChartBar, FaUser, FaCog } from 'react-icons/fa';

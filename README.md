@@ -9,10 +9,11 @@ Providing beautiful, free poker tracking software for everyone.
 
 - **Frontend:** React
 - **Styling:** Tailwind CSS
-- **Backend & Database:** Supabase
-- **Server:** Node.js with Express
+- **Database:** Supabase
+- **Backend Server:** Node.js with Express
+- **Data Analysis:** Python
 
-## Features (Coming Soon)
+## Features
 
 - **Tracking Sessions**  
   Track your poker sessions with ease.
@@ -20,10 +21,10 @@ Providing beautiful, free poker tracking software for everyone.
 - **Reports and Dashboards**  
   View detailed reports and intuitive dashboards to understand your performance.
 
-- **Social Networking**  
+- **Social Networking (Coming Soon)**  
   Connect with other poker players, share experiences, and tips.
 
-- **Sharing Records/Stats**  
+- **Sharing Records/Stats (Coming Soon)**  
   Share your poker records, stats, and even your most down bad moments.
 
 - **Streaks Tracking**  

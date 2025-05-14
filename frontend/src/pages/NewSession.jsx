@@ -4,6 +4,7 @@ import Sidebar from '../components/SideBar';
 import { FaCalendar, FaDollarSign, FaClock, FaMapMarkerAlt, FaGamepad } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import { createNewSession } from '../services/sessionService'; 
+import SessionSummary from '../components/SessionSummary';
 
 const NewSession = () => {
   const navigate = useNavigate();
@@ -123,6 +124,11 @@ const NewSession = () => {
         } catch (err) {
         console.error('Failed to create session:', err);
         setError(err.message || 'Failed to create session');
+        
+        window.scrollTo({   // Scroll to the top of the page to show the error message
+            top: 0,
+            behavior: 'smooth'
+        });
         } finally {
         setIsSubmitting(false);
         }
@@ -236,6 +242,7 @@ const NewSession = () => {
                             required
                         >
                             <option value="Cash - NL Hold'em">Cash - NL Hold'em</option>
+                            <option value="Cash - Limit Hold'em">Cash - Limit Hold'em</option>
                             <option value="Tournament">Tournament</option>
                             <option value="Sit & Go">Sit & Go</option>
                         </select>
@@ -287,10 +294,11 @@ const NewSession = () => {
                             className="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:outline-none focus:ring-2 focus:ring-indigo-500"
                             defaultValue="0.1/0.2"
                             >
+                            <option value="0.05/0.1">$0.05 / $0.1</option>
                             <option value="0.1/0.2">$0.1 / $0.2</option>
-                            <option value="0.25/0.5">$0.25 / $0.5</option>
                             <option value="0.5/1">$0.5 / $1</option>
                             <option value="1/2">$1 / $2</option>
+                            <option value="1/3">$1 / $3</option>
                             <option value="custom">Custom...</option>
                             </select>
                         </div>
@@ -348,16 +356,11 @@ const NewSession = () => {
                         </div>
                     </div>
                     
-                    {/* Profit/Loss Preview */}
+                    {/* Session Summary component */}
                     {formData.buyIn && formData.cashOut && (
-                        <div className="mb-6 p-4 rounded-lg bg-gray-700/50">
-                        <h3 className="text-lg font-medium text-white mb-2">Session Summary</h3>
-                        <p className={`text-xl font-bold ${parseFloat(formData.cashOut) - parseFloat(formData.buyIn) >= 0 ? 'text-green-400' : 'text-red-400'}`}>
-                            {parseFloat(formData.cashOut) - parseFloat(formData.buyIn) >= 0 ? 'Profit: ' : 'Loss: '}
-                            ${Math.abs(parseFloat(formData.cashOut) - parseFloat(formData.buyIn)).toFixed(2)}
-                        </p>
-                        </div>
+                    <SessionSummary formData={formData} />
                     )}
+                    
                 
                 {/* Form Actions */}
                 <div className="flex justify-end gap-4">

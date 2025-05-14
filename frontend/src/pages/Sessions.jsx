@@ -18,11 +18,14 @@ const groupSessionsByMonth = (sessions) => {
     if (!monthMapping[monthKey]) {
       monthMapping[monthKey] = {
         label: new Date(date.getFullYear(), date.getMonth(), 1).toLocaleString('default', { month: 'long', year: 'numeric' }),
-        sessions: []
+        sessions: [],
+        totalProfit: 0,
       };
     }
     // Add session to the corresponding month's list
     monthMapping[monthKey].sessions.push(session);
+    // Add profit to monthly total 
+    monthMapping[monthKey].totalProfit += Number(session.profit_loss || 0);
   })
 
   // Convert to array of objects with label: and sessions: and sort by date (newest first)
@@ -64,7 +67,7 @@ function Sessions() {
     <div className="flex min-h-screen bg-gray-900">
       <Sidebar />
       
-      <main className="ml-16 w-full p-6">
+      <main className="ml-16 w-full p-6 ml-40">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -100,10 +103,14 @@ function Sessions() {
                   <div key={index} className="month-group">
                     {/* Month header and sessions */}
                     <div className="month-header mb-2">
-                      <h2 className="text-xl font-semibold text-indigo-300 flex items-center gap-2 px-2 py-1 border-b border-indigo-800/50">
-                        {/* <FaCalendarAlt className="text-indigo-400" /> OPTIONAL ICON */} 
-                        {monthGroup.label}
-                      </h2>
+                      <div className="flex justify-between items-center px-2 py-1 border-b border-indigo-800/50">
+                      <h2 className="text-xl font-semibold text-indigo-300 flex items-center gap-2">
+                          {monthGroup.label}
+                        </h2>
+                        <div className={`font-semibold ${monthGroup.totalProfit >= 0 ? 'text-green-400' : 'text-red-400'}`}>
+                          {monthGroup.totalProfit >= 0 ? '+' : ''}${monthGroup.totalProfit.toFixed(2)}
+                        </div>
+                      </div>
                     </div>
                     <div className="session-cards space-y-3">
                       {monthGroup.sessions.map((session) => (

@@ -41,8 +41,12 @@ function SessionCard({ session }) {
 
   // Handle session click to navigate to detail page
   const handleSessionClick = () => {
-    navigate(`/sessions/${session.id}`);
+    navigate(`/sessions/${session.session_id}`);
   };
+
+  const additionalInfo = JSON.parse(session.additional_info);
+  const sb = additionalInfo.sb || "?";
+  const bb = additionalInfo.bb || "?";
 
   
   return (
@@ -55,7 +59,7 @@ function SessionCard({ session }) {
       
       {/* Main content */}
       <div className="flex-grow py-2 px-3">
-        <h3 className="text-md font-medium text-white truncate">{session.game_type || 'Poker Session'}</h3>
+        <h3 className="text-md font-medium text-white truncate">${sb}/${bb} {session.game_type}</h3>
         <div className="flex flex-wrap text-xs text-gray-400 mt-1">
           <div className="flex items-center mr-4">
             <FaClock className="mr-1 text-indigo-400" size={10} />
@@ -78,9 +82,9 @@ function SessionCard({ session }) {
       {/* Navigate button */}
       <button 
         onClick={handleSessionClick} 
-        className="h-full px-3 bg-gray-700 hover:bg-indigo-600 transition-colors flex items-center"
+        className="pr-4 pl-2 flex items-center cursor-pointer"
       >
-        <FaChevronRight className="text-gray-300" />
+        <FaChevronRight className="text-gray-400 hover:text-indigo-400 transition-colors" />
       </button>
     </div>
   );

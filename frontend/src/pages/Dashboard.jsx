@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { getUserProfile } from '../services/authService';
 import SideBar from '../components/SideBar';
-
+import AllSessionsGraph from '../components/graphs/AllSessionsGraph';
+import StatsSummaryCards from "../components/dashboard/StatsSummaryCards";
+import RecentSessions from '../components/dashboard/RecentSessions';
 
 const Dashboard = () => {
     const [profile, setProfile] = useState(null);
@@ -33,21 +35,23 @@ const Dashboard = () => {
         <div className="flex h-screen">
             <SideBar />
 
-            {/* main total session graph
-            last 5 sessions, add session button
-            important stats:
-            total time played, total profit, total sessions, etc */}
-
-            <div class="flex-1 bg-gray-900 p-6">
-                <h1 class="text-2xl font-semibold">Main Content</h1>
-                <p class="mt-2 text-gray-700">This is where your content goes.</p>
+            <div className="flex-1 bg-gray-900 p-6 overflow-auto ml-40">
+                <h1 className="text-3xl font-semibold text-white mb-6">Dashboard</h1>
+                
+                {/* Stats Cards Row */}
+                <StatsSummaryCards />
+                
+                <div className="flex flex-col lg:flex-row gap-6 mb-6">
+                    <div className="lg:w-1/2">
+                        <AllSessionsGraph height={300} width="100%" />
+                    </div>
+                    <div className="lg:w-1/2">
+                        <RecentSessions />
+                    </div>
+                </div>
             </div>
-
-
         </div>
     );
 };
 
 export default Dashboard;
-
-
