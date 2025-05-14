@@ -37,8 +37,8 @@ def process(sessions_data):
     df['duration_hours'] = (df['end_time'] - df['date']).dt.total_seconds() / 3600
 
     # Calculate $ per hour
-    df['$_per_hour'] = df.apply(lambda row: row['profit'] / row['duration_hours'] if row['duration_hours'] > 0 else 0, axis=1)
-
+    df['$_per_hour'] = df['profit'] / df['duration_hours'].replace(0, np.nan)
+  
     # Extract BB size from additional_info and calculate BB per hour
     def extract_bb_size(row):
         try:
@@ -51,8 +51,8 @@ def process(sessions_data):
             return 0.2  # Default fallback just in case
     
     df['bb_size'] = df.apply(extract_bb_size, axis=1)
-    df['bb_per_hour'] = df.apply(lambda row: (row['profit'] / row['bb_size']) / row['duration_hours'] if row['duration_hours'] > 0 else 0, axis=1)
-
+    df['bb_per_hour'] = (df['profit'] / df['bb_size']) / df['duration_hours'].replace(0, np.nan)
+    
     # ======= Calculate cumulative hourly metrics =======
     # First, calculate total profit and total hours up to each session
     df['cum_total_profit'] = df['profit'].cumsum()

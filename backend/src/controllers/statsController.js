@@ -1,6 +1,5 @@
-const { spawn } = require('child_process');
+const { PythonShell } = require('python-shell');
 const supabase = require('../config/supabase');
-
 
 const analyzePokerSessions = async (req, res) => {
   try {
@@ -24,36 +23,58 @@ const analyzePokerSessions = async (req, res) => {
       return res.json([]);
     }
 
-    // Run Python analysis script
-    const python = spawn('python3', ['./src/python/analyze_sessions.py']);
+    // Set up options for PythonShell
+    const options = {
+      mode: 'json', // Get output as parsed JSON
+      pythonPath: 'python3', // Specify the path to your Python executable
+      scriptPath: './src/python', // Path to your Python scripts
+      args: [], // Any arguments to pass to the script
+      stdin: true // Enable stdin for sending data to the Python script
+    };
 
-    let result = '';
-    python.stdout.on('data', (data) => {
-        result += data.toString();
-        // console.log('\n===== analyzePokerSessions Python Output =====');
-        // console.log(result);
-        // console.log('================================================\n');
-    });
-
-    python.stderr.on('data', (data) => {
-      console.error('Python error:', data.toString());
-    });
-
-    python.on('close', (code) => {
-      if (code !== 0) {
-        return res.status(500).json({ error: 'Analysis failed' });
-      }
-      try {
-        const parsed = JSON.parse(result);
-        res.json(parsed);
-      } catch (e) {
-        res.status(500).json({ error: 'Failed to parse analysis results' });
-      }
-    });
-
-    // Send session data to Python script
-    python.stdin.write(JSON.stringify(sessionData));
-    python.stdin.end();
+    // Start the Python process
+    let analysisResults;
+    try {
+      // Run the Python script with the session data
+      analysisResults = await new Promise((resolve, reject) => {
+        // Create a new PythonShell instance
+        const pyshell = new PythonShell('analyze_sessions.py', options);
+        
+        // Send the session data to the Python script
+        pyshell.send(sessionData);
+        
+        let result = null;
+        let errorMessage = '';
+        
+        // Handle messages from the Python script
+        pyshell.on('message', (message) => {
+          result = message;
+        });
+        
+        // Handle errors
+        pyshell.on('stderr', (stderr) => {
+          console.error('Python error:', stderr);
+          errorMessage += stderr;
+        });
+        
+        // Handle script end
+        pyshell.end((err) => {
+          if (err) {
+            console.error('PythonShell error:', err);
+            reject(new Error(errorMessage || err.message));
+          } else {
+            resolve(result);
+          }
+        });
+      });
+      
+      // Send the analysis results back to the client
+      res.json(analysisResults);
+      
+    } catch (pythonError) {
+      console.error('Python analysis error:', pythonError);
+      res.status(500).json({ error: 'Failed to analyze session data', details: pythonError.message });
+    }
     
   } catch (err) {
     console.error('statsController error:', err);
