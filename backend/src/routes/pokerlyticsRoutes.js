@@ -18,7 +18,7 @@ router.put('/user-profile', authenticateUser, userController.updateProfile); // 
 // Session routes - protected
 router.post('/sessions', authenticateUser, sessionsController.createSession);
 router.get('/sessions', authenticateUser, sessionsController.getSessions);
-router.get('/sessions-graph', authenticateUser, statsController.analyzePokerSessions);
+router.get('/sessions-graph', authenticateUser, statsController.analyzePokerSessions);      // calls python script
 router.delete('/sessions/:id', authenticateUser, sessionsController.deleteSession);
 router.get('/sessions/:id', authenticateUser, sessionsController.getSessionById);
 router.put('/sessions/:id', authenticateUser, sessionsController.updateSession);

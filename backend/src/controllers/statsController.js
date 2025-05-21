@@ -1,4 +1,4 @@
-const { PythonShell } = require('python-shell');
+const axios = require('axios');
 const supabase = require('../config/supabase');
 
 const analyzePokerSessions = async (req, res) => {
@@ -23,63 +23,28 @@ const analyzePokerSessions = async (req, res) => {
       return res.json([]);
     }
 
-    // Set up options for PythonShell
-    const options = {
-      mode: 'json', // Get output as parsed JSON
-      pythonPath: 'python3', // Specify the path to your Python executable
-      scriptPath: './src/python', // Path to your Python scripts
-      args: [], // Any arguments to pass to the script
-      stdin: true // Enable stdin for sending data to the Python script
-    };
+    // Session data should be in the format expected by FastAPI:
+    // console.log('Session data:', sessionData);
 
-    // Start the Python process
-    let analysisResults;
+    // Send sessionData to FastAPI
     try {
-      // Run the Python script with the session data
-      analysisResults = await new Promise((resolve, reject) => {
-        // Create a new PythonShell instance
-        const pyshell = new PythonShell('analyze_sessions.py', options);
-        
-        // Send the session data to the Python script
-        pyshell.send(sessionData);
-        
-        let result = null;
-        let errorMessage = '';
-        
-        // Handle messages from the Python script
-        pyshell.on('message', (message) => {
-          result = message;
-        });
-        
-        // Handle errors
-        pyshell.on('stderr', (stderr) => {
-          console.error('Python error:', stderr);
-          errorMessage += stderr;
-        });
-        
-        // Handle script end
-        pyshell.end((err) => {
-          if (err) {
-            console.error('PythonShell error:', err);
-            reject(new Error(errorMessage || err.message));
-          } else {
-            resolve(result);
-          }
-        });
+      const response = await axios.post('http://localhost:8000/analyze-sessions', sessionData, {
+        headers: { 'Content-Type': 'application/json' },
+        timeout: 5000, // Optional: fail fast if Python API is slow
       });
-      
-      // Send the analysis results back to the client
-      res.json(analysisResults);
-      
-    } catch (pythonError) {
-      console.error('Python analysis error:', pythonError);
-      res.status(500).json({ error: 'Failed to analyze session data', details: pythonError.message });
+
+      res.json(response.data);
+    } catch (apiError) {
+      console.error('FastAPI error:', apiError.message);
+      res.status(500).json({ error: 'Failed to analyze data', details: apiError.message });
     }
-    
+
   } catch (err) {
     console.error('statsController error:', err);
-    res.status(500).json({ error: 'An unexpected error occurred' });
+    res.status(500).json({ error: 'Unexpected error occurred' });
   }
+      
+
 };
 
 module.exports = { analyzePokerSessions };

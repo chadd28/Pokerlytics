@@ -5,13 +5,18 @@
 
 **Purpose:**  
 Providing beautiful, free poker tracking software for everyone.
+
+## Check it out here  
+[https://pokerlytics-frontend.vercel.app/](https://pokerlytics-frontend.vercel.app/)
+
+
 ## Tech Stack
 
-- **Frontend:** React
+- **Frontend:** React (Vite)
 - **Styling:** Tailwind CSS
 - **Database:** Supabase
 - **Backend Server:** Node.js with Express
-- **Data Analysis:** Python
+- **Data Analysis:** Python (FastAPI microservice) 
 
 ## Features
 
@@ -21,7 +26,7 @@ Providing beautiful, free poker tracking software for everyone.
 - **Reports and Dashboards**  
   View detailed reports and intuitive dashboards to understand your performance.
 
-- **Social Networking (Coming Soon)** 
+- **Social Networking (Coming Soon)**  
   Connect with other poker players, share experiences, and tips.
 
 - **Sharing Records/Stats (Coming Soon)**  
