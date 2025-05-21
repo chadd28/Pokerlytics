@@ -11,7 +11,7 @@ const ResetPassword = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Check if we're on the reset password page with the recovery token
+    // Check if we're on the reset password page with the recovery token    
     const hash = window.location.hash;
     if (!hash || !hash.includes('type=recovery')) {
       setMessage({

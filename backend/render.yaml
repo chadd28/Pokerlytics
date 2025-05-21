@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: pokerlytics-backend
+    env: node
+    buildCommand: |
+      npm install
+      pip3 install -r requirements.txt
+    startCommand: node index.js
+    plan: free

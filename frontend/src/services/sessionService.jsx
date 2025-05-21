@@ -4,7 +4,7 @@ import { notifyChange } from '../context/sessionsContext';
 
 // Create an axios instance with a base URL
 const api = axios.create({
-  baseURL: 'http://localhost:4000/pokerlytics'
+  baseURL: import.meta.env.VITE_API_URL
 });
 
 // Add an interceptor to automatically add the auth token to all requests

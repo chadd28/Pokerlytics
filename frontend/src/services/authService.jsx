@@ -3,7 +3,7 @@ import axios from 'axios';
 import { notifyChange } from '../context/sessionsContext';
 
 // Backend API URL
-const API_URL = 'http://localhost:4000/pokerlytics';
+const API_URL = import.meta.env.VITE_API_URL
 
 // ---------- AUTH FUNCTIONS ----------
 

@@ -156,11 +156,12 @@ export default function AllSessionsGraph({ height = 320, width = "100%" }) {
                 
                 {/* Bright blue line for visibility on dark background */}
                 <Line 
-                  type="linear" 
-                  dataKey="cum_profit" 
-                  stroke="#60A5FA" 
-                  strokeWidth={2.5}
-                  dot={false}
+                    type="linear" 
+                    dataKey="cum_profit" 
+                    stroke="#60A5FA" 
+                    strokeWidth={2.5}
+                    dot={false}
+                  
                 />
                 </LineChart>
             </ResponsiveContainer>

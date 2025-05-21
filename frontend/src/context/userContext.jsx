@@ -6,8 +6,20 @@ const UserContext = createContext(null);
 
 export function UserProvider({ children }) {
   const [profile, setProfile] = useState(() => {
-    const cached = localStorage.getItem('userProfile');
-    return cached ? JSON.parse(cached) : null;
+    try {
+      const cached = localStorage.getItem('userProfile');
+      //console.log('Cached profile:', cached);
+      // Only parse if cached exists and isn't "undefined"
+      if (cached && cached !== "undefined") {
+        return JSON.parse(cached);
+      }
+      return null;
+    } catch (error) {
+      console.error('Error parsing user profile from localStorage', error);
+      // Clear the invalid data
+      localStorage.removeItem('userProfile');
+      return null;
+    }
   });
   const [loading, setLoading] = useState(!profile); // if profile already cached, skip loading
   const [error, setError] = useState(null);
@@ -18,6 +30,7 @@ export function UserProvider({ children }) {
       const data = await getUserProfile();
       setProfile(data.user);
       localStorage.setItem('userProfile', JSON.stringify(data.user)); // cache it
+      // console.log('Profile fetched:', data.user);
       return data.user;
     } catch (err) {
       console.error('Error fetching profile:', err);

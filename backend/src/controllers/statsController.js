@@ -1,6 +1,5 @@
-const { spawn } = require('child_process');
+const axios = require('axios');
 const supabase = require('../config/supabase');
-
 
 const analyzePokerSessions = async (req, res) => {
   try {
@@ -24,41 +23,28 @@ const analyzePokerSessions = async (req, res) => {
       return res.json([]);
     }
 
-    // Run Python analysis script
-    const python = spawn('python3', ['./src/python/analyze_sessions.py']);
+    // Session data should be in the format expected by FastAPI:
+    // console.log('Session data:', sessionData);
 
-    let result = '';
-    python.stdout.on('data', (data) => {
-        result += data.toString();
-        // console.log('\n===== analyzePokerSessions Python Output =====');
-        // console.log(result);
-        // console.log('================================================\n');
-    });
+    // Send sessionData to FastAPI
+    try {
+      const response = await axios.post('http://localhost:8000/analyze-sessions', sessionData, {
+        headers: { 'Content-Type': 'application/json' },
+        timeout: 5000, // Optional: fail fast if Python API is slow
+      });
 
-    python.stderr.on('data', (data) => {
-      console.error('Python error:', data.toString());
-    });
+      res.json(response.data);
+    } catch (apiError) {
+      console.error('FastAPI error:', apiError.message);
+      res.status(500).json({ error: 'Failed to analyze data', details: apiError.message });
+    }
 
-    python.on('close', (code) => {
-      if (code !== 0) {
-        return res.status(500).json({ error: 'Analysis failed' });
-      }
-      try {
-        const parsed = JSON.parse(result);
-        res.json(parsed);
-      } catch (e) {
-        res.status(500).json({ error: 'Failed to parse analysis results' });
-      }
-    });
-
-    // Send session data to Python script
-    python.stdin.write(JSON.stringify(sessionData));
-    python.stdin.end();
-    
   } catch (err) {
     console.error('statsController error:', err);
-    res.status(500).json({ error: 'An unexpected error occurred' });
+    res.status(500).json({ error: 'Unexpected error occurred' });
   }
+      
+
 };
 
 module.exports = { analyzePokerSessions };
